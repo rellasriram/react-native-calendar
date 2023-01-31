@@ -1,8 +1,9 @@
 import { NavigationHelpersContext, useNavigation } from '@react-navigation/core'
 import React, { useRef, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, TextInput } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, TextInput, Button } from 'react-native'
 import { auth } from '../firebase'
 import DatePicker from '@react-native-community/datetimepicker';
+import * as Calendar from 'expo-calendar';
 
 const HomeScreen = () => {
 
@@ -39,6 +40,18 @@ const HomeScreen = () => {
     setMode(currentMode);
   }
 
+  const handleCreateEvent = async () => {
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status === 'granted') {
+      const calendar = await Calendar.getDefaultCalendarAsync();
+      await Calendar.createEventAsync(calendar.id, {
+        title: eventName,
+        startDate: date,
+        endDate: date,
+      });
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -70,7 +83,7 @@ const HomeScreen = () => {
         }
         
         <TouchableOpacity
-          onPress={handleSignOut} //fix this
+          onPress={handleCreateEvent} //fix this
           style={styles.button}
         >
         <Text style={styles.buttonText}>Create Event</Text>
